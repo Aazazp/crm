@@ -13,6 +13,46 @@ def index():
 def about():
     return dict(message="About us")
 
+@auth.requires_login()
+def personal():
+    user_id = auth.user_id
+    sqlstmt_events = (
+        "SELECT user_id, status, event_type, COUNT(*) AS event_count "
+        "FROM events "
+        f"WHERE user_id = {user_id} "
+        "AND status = 'Open' "
+        "AND (event_type = 'Call' OR event_type = 'Email') "
+        "AND comm_type IN ('Phone', 'Email', 'In person') "
+        "GROUP BY user_id, status, event_type"
+    )
+    rows = db.executesql(sqlstmt_events, as_dict=True)
+    return dict(rows=rows)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#@auth.requires_login()
+#def personal():
+    #user_id = 4
+    #sqlstmt_events = (
+       #"SELECT user_id, status, event_type, COUNT(*) AS event_count "
+        #"FROM events "
+        #"WHERE user_id = " + str(user_id) + " AND status = 'Open' AND event_type = 'Call' "
+        #"GROUP BY user_id, status, event_type"
+    #)
+    #rows = db.executesql(sqlstmt_events, as_dict=True)
+    #return dict(rows=rows)
+
 
 def productz():
     return dict(message="Our products")
